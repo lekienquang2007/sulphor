@@ -3,9 +3,10 @@ import Stripe from "stripe"
 import { createClient } from "@/lib/supabase/server"
 import { encrypt } from "@/lib/crypto"
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-03-25.dahlia" })
+export const dynamic = 'force-dynamic'
 
 export async function GET(request: Request) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-03-25.dahlia" })
   const { searchParams } = new URL(request.url)
   const code = searchParams.get("code")
   const state = searchParams.get("state") // user_id

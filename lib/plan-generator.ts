@@ -3,8 +3,6 @@ import { applyRules } from "@/lib/rules-engine"
 import type { AllocationRule, PayoutPlan } from "@/lib/rules-engine"
 import { formatCents, formatDate } from "@/lib/utils"
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
 export interface PreviousPayout {
   amount: number
   arrival_date: string
@@ -16,6 +14,7 @@ export async function generatePlanSummary(
   arrivalDate: string,
   previous: PreviousPayout | null
 ): Promise<string> {
+  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
   const itemLines = plan.items
     .map((i) => `${i.label}: ${formatCents(i.amount)}`)
     .join(", ")

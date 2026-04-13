@@ -4,6 +4,8 @@ import { syncPayoutsAndBalance } from "@/lib/stripe-sync"
 import { decrypt } from "@/lib/crypto"
 import { rateLimit } from "@/lib/rate-limit"
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   const supabase = await createClient()
 

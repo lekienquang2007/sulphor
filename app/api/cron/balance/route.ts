@@ -4,6 +4,8 @@ import Stripe from "stripe"
 import type { Database } from "@/types/database"
 import { decrypt } from "@/lib/crypto"
 
+export const dynamic = 'force-dynamic'
+
 // Vercel cron: runs daily
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization")

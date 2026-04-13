@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 
+export const dynamic = 'force-dynamic'
+
 // GET /api/analytics — basic plan metrics for the authed user
 export async function GET() {
   const supabase = await createClient()

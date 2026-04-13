@@ -4,6 +4,8 @@ import { validateRules, DEFAULT_RULES } from "@/lib/rules-engine"
 import type { AllocationRule } from "@/lib/rules-engine"
 import { rateLimit } from "@/lib/rate-limit"
 
+export const dynamic = 'force-dynamic'
+
 // GET /api/rules — list active rules for the authed user
 export async function GET() {
   const supabase = await createClient()

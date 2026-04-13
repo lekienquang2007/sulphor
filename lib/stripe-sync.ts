@@ -2,20 +2,14 @@ import Stripe from "stripe"
 import { SupabaseClient } from "@supabase/supabase-js"
 import type { Database } from "@/types/database"
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-03-25.dahlia" })
-
 export async function syncPayoutsAndBalance(
   supabase: SupabaseClient<Database>,
   userId: string,
   accessToken: string
 ) {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-03-25.dahlia" })
   // Sync last 12 months of payouts
   const twelveMonthsAgo = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 365
-
-  const payouts = await stripe.payouts.list(
-    { limit: 100, created: { gte: twelveMonthsAgo } },
-    { stripeAccount: undefined, headers: { Authorization: `Bearer ${accessToken}` } }
-  )
 
   // Auto-paginate
   const allPayouts: Stripe.Payout[] = []

@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server"
 import Stripe from "stripe"
 import { createClient } from "@/lib/supabase/server"
-import { syncPayoutsAndBalance } from "@/lib/stripe-sync"
 import { generatePlan } from "@/app/api/payout-plans/route"
-import { decrypt } from "@/lib/crypto"
 
 export async function POST(request: Request) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-03-25.dahlia" })
@@ -43,7 +41,6 @@ export async function POST(request: Request) {
   }
 
   const userId = connection.user_id
-  const accessToken = decrypt(connection.access_token)
 
   switch (event.type) {
     case "payout.created":

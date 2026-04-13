@@ -12,12 +12,7 @@ export async function syncPayoutsAndBalance(
   // Sync last 12 months of payouts
   const twelveMonthsAgo = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 365
 
-  const payouts = await stripe.payouts.list(
-    { limit: 100, created: { gte: twelveMonthsAgo } },
-    { stripeAccount: undefined, headers: { Authorization: `Bearer ${accessToken}` } }
-  )
-
-  // Auto-paginate
+  // Auto-paginate all payouts for the last 12 months
   const allPayouts: Stripe.Payout[] = []
   for await (const payout of stripe.payouts.list(
     { limit: 100, created: { gte: twelveMonthsAgo } },

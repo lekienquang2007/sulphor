@@ -18,7 +18,7 @@ interface PlanActionsProps {
   spendableAmount: number
 }
 
-export default function PlanActions({ planId, items, payoutAmount, spendableAmount }: PlanActionsProps) {
+export default function PlanActions({ planId, items, payoutAmount }: PlanActionsProps) {
   const router = useRouter()
   const [mode, setMode] = useState<"default" | "edit">("default")
   const [editedItems, setEditedItems] = useState<LineItem[]>(items.map((i) => ({ ...i })))

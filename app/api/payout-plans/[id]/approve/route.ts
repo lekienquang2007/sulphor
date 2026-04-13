@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import type { PlanWithRelations } from "@/types/app"
 
+export const dynamic = 'force-dynamic'
+
 // POST /api/payout-plans/[id]/approve
 // Body: { items?: { bucket_name, amount }[], notes?: string }
 // If items is provided, it's an edit-and-approve — overrides are validated before storing.

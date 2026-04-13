@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server"
 import { generatePlan } from "@/lib/generate-plan"
 import type { PlanWithRelations } from "@/types/app"
 
+export const dynamic = 'force-dynamic'
+
 // GET /api/payout-plans — list plans for authed user
 export async function GET() {
   const supabase = await createClient()

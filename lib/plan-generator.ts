@@ -24,14 +24,21 @@ export async function generatePlanSummary(
     ? `Previous payout was ${formatCents(previous.amount)} on ${formatDate(previous.arrival_date)} with allocations: ${previous.items.map((i) => `${i.label} ${formatCents(i.amount)}`).join(", ")}.`
     : "This is the first tracked payout."
 
-  const prompt = `You are summarizing a payout plan for a solo business founder. Use only the exact numbers provided — do not recalculate or estimate anything.
+  const prompt = `You are a plain-language summarizer for a payout allocation tool. Your only job is to describe what the numbers say — not to advise, coach, or recommend anything.
+
+Strict rules:
+- Use ONLY the exact dollar amounts provided below. Do not recalculate, round differently, or invent any number.
+- Do NOT suggest rule changes, comment on whether allocations are appropriate, or provide any financial or tax advice.
+- Do NOT use words like "recommend", "suggest", "consider", "you should", "ideally", or "tip".
+- Do NOT reference AI, automation, or this tool by name.
+- Write 2-3 sentences maximum. Plain language. Past tense for what arrived, present tense for what it means.
 
 Payout: ${formatCents(plan.payout_amount)} arrived on ${formatDate(arrivalDate)}.
 Allocations: ${itemLines}.
-Unreserved (spendable): ${formatCents(plan.spendable_amount)}.
+Unreserved: ${formatCents(plan.spendable_amount)}.
 ${prevSection}
 
-Write a 2-3 sentence plain-language summary of this payout plan. If there was a previous payout, briefly note any significant change in total amount or largest allocations. Do not recalculate numbers. Use exactly the numbers provided above.`
+Write the summary now.`
 
   const message = await anthropic.messages.create({
     model: "claude-sonnet-4-6",

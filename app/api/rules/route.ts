@@ -78,6 +78,11 @@ export async function POST(request: Request) {
     .eq("user_id", user.id)
     .eq("is_active", true)
 
+  // Cap at 8 active buckets
+  if ((existing?.length ?? 0) >= 8) {
+    return NextResponse.json({ error: "Maximum of 8 allocation buckets allowed." }, { status: 422 })
+  }
+
   const newRule = { id: "new", bucket_name: safeBucketName, label: safeLabel, rule_type, value: safeValue, priority: safePriority, is_active: true }
   const validation = validateRules([...(existing ?? []), newRule] as AllocationRule[])
   if (!validation.valid) {

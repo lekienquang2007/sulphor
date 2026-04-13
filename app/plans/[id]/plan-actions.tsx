@@ -121,18 +121,30 @@ export default function PlanActions({ planId, items, payoutAmount, spendableAmou
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-5 space-y-3">
-      {error && <p className="text-sm text-red-600">{error}</p>}
+    <div className="bg-foreground rounded-xl p-5 space-y-3">
+      {error && <p className="text-sm text-red-400">{error}</p>}
 
-      <Button onClick={() => handleApprove(false)} disabled={loading} className="w-full">
-        {loading ? "Processing..." : "Approve plan"}
-      </Button>
-      <Button variant="outline" onClick={() => setMode("edit")} disabled={loading} className="w-full">
+      <button
+        onClick={() => handleApprove(false)}
+        disabled={loading}
+        className="w-full py-3.5 px-5 bg-accent text-white text-sm font-semibold rounded-lg hover:bg-accent/90 disabled:opacity-50 transition-colors tracking-wide"
+      >
+        {loading ? "Approving..." : "Approve this plan"}
+      </button>
+      <button
+        onClick={() => setMode("edit")}
+        disabled={loading}
+        className="w-full py-2.5 px-5 bg-white/10 text-white text-sm font-medium rounded-lg hover:bg-white/15 disabled:opacity-50 transition-colors"
+      >
         Edit and approve
-      </Button>
-      <Button variant="ghost" onClick={handleSkip} disabled={loading} className="w-full text-gray-500">
+      </button>
+      <button
+        onClick={handleSkip}
+        disabled={loading}
+        className="w-full py-2 px-5 text-white/40 text-xs hover:text-white/60 disabled:opacity-50 transition-colors"
+      >
         Skip — handle manually
-      </Button>
+      </button>
     </div>
   )
 }

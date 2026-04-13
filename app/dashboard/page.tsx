@@ -82,14 +82,14 @@ export default async function DashboardPage() {
   const pendingPlan = plans.find((p) => p.status === "pending")
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Nav */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-        <span className="font-semibold text-gray-900">Sulphor</span>
+      <header className="bg-background border-b border-border px-6 py-4 flex items-center justify-between">
+        <span className="font-semibold text-foreground">Sulphor</span>
         <nav className="flex items-center gap-4 text-sm">
-          <Link href="/dashboard" className="text-gray-900 font-medium">Home</Link>
-          <Link href="/history" className="text-gray-500 hover:text-gray-900">History</Link>
-          <Link href="/settings" className="text-gray-500 hover:text-gray-900">Settings</Link>
+          <Link href="/dashboard" className="text-foreground font-medium">Home</Link>
+          <Link href="/history" className="text-muted-foreground hover:text-foreground">History</Link>
+          <Link href="/settings" className="text-muted-foreground hover:text-foreground">Settings</Link>
         </nav>
       </header>
 
@@ -110,51 +110,46 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        {/* Balance */}
+        {/* Unreserved — hero number, largest thing on screen */}
+        <div className="bg-foreground rounded-xl px-6 py-7">
+          <p className="text-xs text-white/50 uppercase tracking-widest font-medium mb-2">
+            Unreserved from tracked payouts
+          </p>
+          <p className="money-hero text-6xl font-bold text-white leading-none mb-3">
+            {formatCents(unreserved)}
+          </p>
+          <p className="text-xs text-white/40 leading-relaxed max-w-sm">
+            Virtual allocation — reflects what you haven&apos;t reserved from payouts tracked here.
+            Not a live bank balance, not a separate account.
+          </p>
+        </div>
+
+        {/* Next payout readiness + balance */}
         <Card>
-          <CardHeader>
-            <CardTitle className="text-sm text-gray-500 font-medium uppercase tracking-wide">
-              Stripe Balance
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {balance ? (
-              <div className="flex gap-8">
-                <div>
-                  <p className="text-2xl font-bold text-gray-900">{formatCents(balance.available_amount)}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Available</p>
+          <CardContent className="pt-5">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              {balance ? (
+                <div className="flex gap-6">
+                  <div>
+                    <p className="money text-xl font-bold text-foreground">{formatCents(balance.available_amount)}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Available in Stripe</p>
+                  </div>
+                  <div>
+                    <p className="money text-xl font-bold text-muted-foreground">{formatCents(balance.pending_amount)}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Pending</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-gray-400">{formatCents(balance.pending_amount)}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Pending</p>
-                </div>
-              </div>
-            ) : (
-              <p className="text-sm text-gray-400">No balance data yet</p>
-            )}
-            <div className="mt-3 pt-3 border-t border-gray-100">
-              <p className="text-sm text-gray-600">
+              ) : (
+                <p className="text-sm text-muted-foreground">No balance data yet</p>
+              )}
+              <div className="text-sm text-muted-foreground">
                 Next payout:{" "}
                 {nextPayout
-                  ? <span className="font-medium">Expected {formatDate(nextPayout.arrival_date)}</span>
-                  : <span className="text-gray-400">No upcoming payout</span>
+                  ? <span className="font-medium text-foreground">Expected {formatDate(nextPayout.arrival_date)}</span>
+                  : <span>No upcoming payout</span>
                 }
-              </p>
+              </div>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Unreserved hero */}
-        <Card>
-          <CardContent className="pt-6">
-            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-1">
-              Unreserved from tracked payouts
-            </p>
-            <p className="text-5xl font-bold text-gray-900 mb-2">{formatCents(unreserved)}</p>
-            <p className="text-xs text-gray-400 leading-relaxed">
-              This is your planned allocation, not a live bank balance. It reflects what you
-              haven&apos;t reserved from payouts tracked in this app.
-            </p>
           </CardContent>
         </Card>
 
@@ -163,20 +158,21 @@ export default async function DashboardPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Reserves</CardTitle>
-              <span className="text-sm text-gray-500">Total: {formatCents(totalReserved)}</span>
+              <span className="money text-sm text-muted-foreground">{formatCents(totalReserved)} total</span>
             </div>
           </CardHeader>
           <CardContent>
             {buckets.length === 0 ? (
-              <p className="text-sm text-gray-400">No buckets yet. Approve a payout plan to start building reserves.</p>
+              <div className="py-4 text-center">
+                <p className="text-sm text-muted-foreground">No reserves yet.</p>
+                <p className="text-xs text-muted-foreground mt-1">Approve a payout plan to start building virtual reserves.</p>
+              </div>
             ) : (
               <div className="space-y-3">
                 {buckets.map((b) => (
                   <div key={b.id} className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">{b.label}</p>
-                    </div>
-                    <p className="text-sm font-semibold text-gray-900">{formatCents(b.current_balance)}</p>
+                    <p className="text-sm font-medium text-foreground">{b.label}</p>
+                    <p className="money text-sm font-semibold text-foreground">{formatCents(b.current_balance)}</p>
                   </div>
                 ))}
               </div>
@@ -189,12 +185,12 @@ export default async function DashboardPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>Recent Payout Plans</CardTitle>
-              <Link href="/history" className="text-sm text-gray-500 hover:text-gray-900">View all</Link>
+              <Link href="/history" className="text-sm text-muted-foreground hover:text-foreground">View all</Link>
             </div>
           </CardHeader>
           <CardContent>
             {plans.length === 0 ? (
-              <p className="text-sm text-gray-400">No payout plans yet.</p>
+              <p className="text-sm text-muted-foreground/70">No payout plans yet.</p>
             ) : (
               <div className="space-y-3">
                 {plans.map((plan) => {
@@ -203,11 +199,11 @@ export default async function DashboardPage() {
                     <Link
                       key={plan.id}
                       href={`/plans/${plan.id}`}
-                      className="flex items-center justify-between py-2 hover:bg-gray-50 -mx-1 px-1 rounded-md"
+                      className="flex items-center justify-between py-2 hover:bg-muted/50 -mx-1 px-1 rounded-md"
                     >
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{formatCents(plan.payout_amount)}</p>
-                        <p className="text-xs text-gray-500">{po?.arrival_date ? formatDate(po.arrival_date) : "—"}</p>
+                        <p className="money text-sm font-medium text-foreground">{formatCents(plan.payout_amount)}</p>
+                        <p className="text-xs text-muted-foreground">{po?.arrival_date ? formatDate(po.arrival_date) : "—"}</p>
                       </div>
                       <Badge variant={statusVariant(plan.status) as "default" | "success" | "warning" | "destructive" | "outline"}>
                         {plan.status}

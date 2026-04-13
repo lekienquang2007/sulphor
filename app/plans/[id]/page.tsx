@@ -57,14 +57,14 @@ export default async function PlanDetailPage({ params }: { params: { id: string 
   const amountDiff = prevPlan ? plan.payout_amount - prevPlan.payout_amount : null
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-xl mx-auto space-y-5">
 
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{formatCents(plan.payout_amount)}</h1>
-            <p className="text-sm text-gray-500">
+            <h1 className="money text-3xl font-bold text-foreground">{formatCents(plan.payout_amount)}</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">
               {payout?.arrival_date ? formatDate(payout.arrival_date) : "Unknown date"}
             </p>
           </div>
@@ -77,8 +77,8 @@ export default async function PlanDetailPage({ params }: { params: { id: string 
         {plan.ai_summary && (
           <Card>
             <CardContent className="pt-5">
-              <p className="text-xs text-gray-400 uppercase tracking-wide font-medium mb-2">Summary</p>
-              <p className="text-sm text-gray-700 leading-relaxed">{plan.ai_summary}</p>
+              <p className="text-xs text-muted-foreground/70 uppercase tracking-wide font-medium mb-2">Summary</p>
+              <p className="text-sm text-foreground/80 leading-relaxed">{plan.ai_summary}</p>
             </CardContent>
           </Card>
         )}
@@ -87,8 +87,8 @@ export default async function PlanDetailPage({ params }: { params: { id: string 
         {prevPlan && amountDiff !== null && (
           <Card>
             <CardContent className="pt-5">
-              <p className="text-xs text-gray-400 uppercase tracking-wide font-medium mb-2">vs. Previous Payout</p>
-              <p className="text-sm text-gray-700">
+              <p className="text-xs text-muted-foreground/70 uppercase tracking-wide font-medium mb-2">vs. Previous Payout</p>
+              <p className="text-sm text-foreground/80">
                 This payout is{" "}
                 <span className={amountDiff >= 0 ? "text-green-700 font-medium" : "text-red-700 font-medium"}>
                   {amountDiff >= 0 ? "+" : ""}{formatCents(amountDiff)}
@@ -104,7 +104,7 @@ export default async function PlanDetailPage({ params }: { params: { id: string 
                     const diff = item.amount - prev.amount
                     if (diff === 0) return null
                     return (
-                      <p key={item.bucket_name} className="text-xs text-gray-500">
+                      <p key={item.bucket_name} className="text-xs text-muted-foreground">
                         {item.label}:{" "}
                         <span className={diff >= 0 ? "text-green-600" : "text-red-600"}>
                           {diff >= 0 ? "+" : ""}{formatCents(diff)}
@@ -128,22 +128,22 @@ export default async function PlanDetailPage({ params }: { params: { id: string 
               {items.map((item: { id: string; bucket_name: string; label: string; amount: number; rule_type: string; rule_value: number }) => (
                 <div key={item.id} className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{item.label}</p>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-sm font-medium text-foreground">{item.label}</p>
+                    <p className="text-xs text-muted-foreground">
                       {item.rule_type === "percentage" && `${item.rule_value}% of payout`}
                       {item.rule_type === "fixed_amount" && `Fixed $${item.rule_value}`}
                       {item.rule_type === "remainder" && "Remainder"}
                     </p>
                   </div>
-                  <span className="text-sm font-semibold text-gray-900">{formatCents(item.amount)}</span>
+                  <span className="money text-sm font-semibold text-foreground">{formatCents(item.amount)}</span>
                 </div>
               ))}
-              <div className="pt-2 border-t border-gray-100 flex items-center justify-between">
+              <div className="pt-3 border-t border-border flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-semibold text-gray-900">Unreserved (spendable)</p>
-                  <p className="text-xs text-gray-400">Not allocated to any bucket</p>
+                  <p className="text-sm font-semibold text-foreground">Unreserved</p>
+                  <p className="text-xs text-muted-foreground">Not allocated to any bucket in this plan</p>
                 </div>
-                <span className="text-sm font-bold text-gray-900">{formatCents(plan.spendable_amount)}</span>
+                <span className="money text-sm font-bold text-foreground">{formatCents(plan.spendable_amount)}</span>
               </div>
             </div>
           </CardContent>
@@ -153,8 +153,8 @@ export default async function PlanDetailPage({ params }: { params: { id: string 
         {activeRules && activeRules.length > 0 && (
           <Card>
             <CardContent className="pt-5">
-              <p className="text-xs text-gray-400 uppercase tracking-wide font-medium mb-2">Assumptions</p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground/70 uppercase tracking-wide font-medium mb-2">Assumptions</p>
+              <p className="text-xs text-muted-foreground">
                 Based on your current rules:{" "}
                 {activeRules.map((r) => (
                   <span key={r.label}>
@@ -167,6 +167,12 @@ export default async function PlanDetailPage({ params }: { params: { id: string 
             </CardContent>
           </Card>
         )}
+
+        {/* Disclaimers */}
+        <p className="text-xs text-muted-foreground/70 leading-relaxed px-1">
+          All allocations are virtual — this plan reflects your intentions, not a separate account or actual fund segregation.
+          Tax holdback figures are planning estimates only. Consult your accountant for your actual tax obligations.
+        </p>
 
         {/* Actions */}
         {plan.status === "pending" && (
@@ -183,7 +189,7 @@ export default async function PlanDetailPage({ params }: { params: { id: string 
         )}
 
         {plan.status !== "pending" && (
-          <p className="text-center text-sm text-gray-400">
+          <p className="text-center text-sm text-muted-foreground/70">
             This plan was {plan.status}{plan.approved_at ? ` on ${formatDate(plan.approved_at)}` : ""}.
           </p>
         )}

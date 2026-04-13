@@ -25,13 +25,13 @@ export default async function SettingsPage() {
     .order("priority", { ascending: true })
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-        <span className="font-semibold text-gray-900">Sulphor</span>
+    <div className="min-h-screen bg-background">
+      <header className="bg-background border-b border-border px-6 py-4 flex items-center justify-between">
+        <span className="font-semibold text-foreground">Sulphor</span>
         <nav className="flex items-center gap-4 text-sm">
-          <Link href="/dashboard" className="text-gray-500 hover:text-gray-900">Home</Link>
-          <Link href="/history" className="text-gray-500 hover:text-gray-900">History</Link>
-          <Link href="/settings" className="text-gray-900 font-medium">Settings</Link>
+          <Link href="/dashboard" className="text-muted-foreground hover:text-foreground">Home</Link>
+          <Link href="/history" className="text-muted-foreground hover:text-foreground">History</Link>
+          <Link href="/settings" className="text-foreground font-medium">Settings</Link>
         </nav>
       </header>
 
@@ -46,31 +46,31 @@ export default async function SettingsPage() {
             {connection ? (
               <>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Account</span>
-                  <span className="font-mono text-gray-900">{connection.stripe_account_id}</span>
+                  <span className="text-muted-foreground">Account</span>
+                  <span className="font-mono text-foreground">{connection.stripe_account_id}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Mode</span>
+                  <span className="text-muted-foreground">Mode</span>
                   <Badge variant={connection.livemode ? "success" : "warning"}>
                     {connection.livemode ? "Live" : "Test"}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-600">Status</span>
+                  <span className="text-muted-foreground">Status</span>
                   <Badge variant={connection.status === "active" ? "success" : "destructive"}>
                     {connection.status}
                   </Badge>
                 </div>
                 {connection.last_synced_at && (
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">Last synced</span>
-                    <span className="text-gray-500">{formatDate(connection.last_synced_at)}</span>
+                    <span className="text-muted-foreground">Last synced</span>
+                    <span className="text-muted-foreground">{formatDate(connection.last_synced_at)}</span>
                   </div>
                 )}
               </>
             ) : (
               <div className="space-y-3">
-                <p className="text-sm text-gray-500">No Stripe account connected.</p>
+                <p className="text-sm text-muted-foreground">No Stripe account connected.</p>
                 <Button asChild size="sm">
                   <Link href="/onboarding/connect">Connect Stripe</Link>
                 </Button>
@@ -91,13 +91,13 @@ export default async function SettingsPage() {
           </CardHeader>
           <CardContent>
             {!rules || rules.length === 0 ? (
-              <p className="text-sm text-gray-400">No rules configured.</p>
+              <p className="text-sm text-muted-foreground/70">No rules configured.</p>
             ) : (
               <div className="space-y-2">
                 {rules.map((r) => (
                   <div key={r.id} className="flex justify-between text-sm">
-                    <span className="text-gray-700">{r.label}</span>
-                    <span className="text-gray-500">
+                    <span className="text-foreground/80">{r.label}</span>
+                    <span className="text-muted-foreground">
                       {r.rule_type === "percentage" ? `${r.value}%` : r.rule_type === "fixed_amount" ? `$${r.value}` : "remainder"}
                     </span>
                   </div>
@@ -112,8 +112,8 @@ export default async function SettingsPage() {
           <CardHeader><CardTitle>Account</CardTitle></CardHeader>
           <CardContent className="space-y-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Email</span>
-              <span className="text-gray-900">{user.email}</span>
+              <span className="text-muted-foreground">Email</span>
+              <span className="text-foreground">{user.email}</span>
             </div>
             <LogoutButton />
           </CardContent>

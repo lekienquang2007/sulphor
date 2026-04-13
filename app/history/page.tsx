@@ -54,19 +54,17 @@ export default async function HistoryPage() {
     const first = approvedPlans[0].payout_amount
     const last = approvedPlans[approvedPlans.length - 1].payout_amount
     const diff = last - first
-    trendLabel = diff >= 0
-      ? `Payouts grew ${formatCents(diff)} from first to most recent`
-      : `Payouts decreased ${formatCents(Math.abs(diff))} from first to most recent`
+    trendLabel = `${formatCents(Math.abs(diff))} ${diff >= 0 ? "more" : "less"} per payout vs. your first tracked payout`
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-        <span className="font-semibold text-gray-900">Sulphor</span>
+    <div className="min-h-screen bg-background">
+      <header className="bg-background border-b border-border px-6 py-4 flex items-center justify-between">
+        <span className="font-semibold text-foreground">Sulphor</span>
         <nav className="flex items-center gap-4 text-sm">
-          <Link href="/dashboard" className="text-gray-500 hover:text-gray-900">Home</Link>
-          <Link href="/history" className="text-gray-900 font-medium">History</Link>
-          <Link href="/settings" className="text-gray-500 hover:text-gray-900">Settings</Link>
+          <Link href="/dashboard" className="text-muted-foreground hover:text-foreground">Home</Link>
+          <Link href="/history" className="text-foreground font-medium">History</Link>
+          <Link href="/settings" className="text-muted-foreground hover:text-foreground">Settings</Link>
         </nav>
       </header>
 
@@ -81,17 +79,17 @@ export default async function HistoryPage() {
             <div className="space-y-2 mb-4">
               {buckets.map((b) => (
                 <div key={b.id} className="flex justify-between text-sm">
-                  <span className="text-gray-700">{b.label}</span>
-                  <span className="font-semibold text-gray-900">{formatCents(b.current_balance)}</span>
+                  <span className="text-foreground/80">{b.label}</span>
+                  <span className="font-semibold text-foreground">{formatCents(b.current_balance)}</span>
                 </div>
               ))}
-              <div className="pt-2 border-t border-gray-100 flex justify-between text-sm font-semibold">
+              <div className="pt-2 border-t border-border flex justify-between text-sm font-semibold">
                 <span>Total reserved</span>
                 <span>{formatCents(totalReserved)}</span>
               </div>
             </div>
             {trendLabel && (
-              <p className="text-xs text-gray-400">{trendLabel}</p>
+              <p className="text-xs text-muted-foreground/70">{trendLabel}</p>
             )}
           </CardContent>
         </Card>
@@ -103,7 +101,7 @@ export default async function HistoryPage() {
           </CardHeader>
           <CardContent>
             {plans.length === 0 ? (
-              <p className="text-sm text-gray-400">No payout history yet.</p>
+              <p className="text-sm text-muted-foreground/70">No payout history yet.</p>
             ) : (
               <div className="space-y-1">
                 {plans.map((plan) => {
@@ -112,14 +110,14 @@ export default async function HistoryPage() {
                     <Link
                       key={plan.id}
                       href={`/plans/${plan.id}`}
-                      className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0 hover:bg-gray-50 -mx-1 px-1 rounded-md"
+                      className="flex items-center justify-between py-3 border-b border-border/30 last:border-0 hover:bg-muted/50 -mx-1 px-1 rounded-md"
                     >
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{formatCents(plan.payout_amount)}</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-sm font-medium text-foreground">{formatCents(plan.payout_amount)}</p>
+                        <p className="text-xs text-muted-foreground">
                           {po?.arrival_date ? formatDate(po.arrival_date) : "—"}
                           {plan.status === "approved" && (
-                            <span className="ml-2 text-gray-400">Unreserved: {formatCents(plan.spendable_amount)}</span>
+                            <span className="ml-2 text-muted-foreground/70">Unreserved: {formatCents(plan.spendable_amount)}</span>
                           )}
                         </p>
                       </div>
@@ -141,13 +139,13 @@ export default async function HistoryPage() {
           </CardHeader>
           <CardContent>
             {events.length === 0 ? (
-              <p className="text-sm text-gray-400">No events yet.</p>
+              <p className="text-sm text-muted-foreground/70">No events yet.</p>
             ) : (
               <div className="space-y-2">
                 {events.map((ev, i) => (
-                  <div key={i} className="flex items-start gap-3 text-xs text-gray-500">
-                    <span className="shrink-0 text-gray-300">{formatDate(ev.created_at)}</span>
-                    <span className="font-mono bg-gray-50 px-1.5 py-0.5 rounded text-gray-600">{ev.event_type}</span>
+                  <div key={i} className="flex items-start gap-3 text-xs text-muted-foreground">
+                    <span className="shrink-0 text-border">{formatDate(ev.created_at)}</span>
+                    <span className="font-mono bg-muted/50 px-1.5 py-0.5 rounded text-muted-foreground">{ev.event_type}</span>
                   </div>
                 ))}
               </div>

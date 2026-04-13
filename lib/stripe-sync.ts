@@ -1,0 +1,76 @@
+import Stripe from "stripe"
+import { SupabaseClient } from "@supabase/supabase-js"
+import type { Database } from "@/types/database"
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-03-25.dahlia" })
+
+export async function syncPayoutsAndBalance(
+  supabase: SupabaseClient<Database>,
+  userId: string,
+  accessToken: string
+) {
+  // Sync last 12 months of payouts
+  const twelveMonthsAgo = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 365
+
+  const payouts = await stripe.payouts.list(
+    { limit: 100, created: { gte: twelveMonthsAgo } },
+    { stripeAccount: undefined, headers: { Authorization: `Bearer ${accessToken}` } }
+  )
+
+  // Auto-paginate
+  const allPayouts: Stripe.Payout[] = []
+  for await (const payout of stripe.payouts.list(
+    { limit: 100, created: { gte: twelveMonthsAgo } },
+    { headers: { Authorization: `Bearer ${accessToken}` } }
+  )) {
+    allPayouts.push(payout)
+  }
+
+  if (allPayouts.length > 0) {
+    const rows = allPayouts.map((p) => ({
+      user_id: userId,
+      stripe_payout_id: p.id,
+      amount: p.amount,
+      currency: p.currency,
+      arrival_date: new Date(p.arrival_date * 1000).toISOString().split("T")[0],
+      status: p.status,
+      description: p.description ?? null,
+    }))
+
+    const { error } = await supabase
+      .from("stripe_payouts")
+      .upsert(rows, { onConflict: "stripe_payout_id", ignoreDuplicates: false })
+
+    if (error) throw new Error(`Failed to upsert payouts: ${error.message}`)
+  }
+
+  // Sync balance snapshot
+  const balance = await stripe.balance.retrieve(
+    {},
+    { headers: { Authorization: `Bearer ${accessToken}` } }
+  )
+
+  const usdAvailable = balance.available.find((b) => b.currency === "usd")
+  const usdPending = balance.pending.find((b) => b.currency === "usd")
+
+  await supabase.from("stripe_balance_snapshots").insert({
+    user_id: userId,
+    available_amount: usdAvailable?.amount ?? 0,
+    pending_amount: usdPending?.amount ?? 0,
+    currency: "usd",
+  })
+
+  // Update last_synced_at
+  await supabase
+    .from("stripe_connections")
+    .update({ last_synced_at: new Date().toISOString() })
+    .eq("user_id", userId)
+
+  await supabase.from("event_logs").insert({
+    user_id: userId,
+    event_type: "payout_synced",
+    metadata: { count: allPayouts.length },
+  })
+
+  return { payoutCount: allPayouts.length }
+}

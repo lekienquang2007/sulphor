@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
 import Stripe from "stripe"
 import type { Database } from "@/types/database"
+import { decrypt } from "@/lib/crypto"
 
 // Vercel cron: runs daily
 export async function GET(request: Request) {
@@ -32,7 +33,7 @@ export async function GET(request: Request) {
     try {
       const balance = await stripe.balance.retrieve(
         {},
-        { headers: { Authorization: `Bearer ${conn.access_token}` } }
+        { headers: { Authorization: `Bearer ${decrypt(conn.access_token)}` } }
       )
 
       const usdAvailable = balance.available.find((b) => b.currency === "usd")

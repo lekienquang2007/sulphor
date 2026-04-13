@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { validateRules, DEFAULT_RULES } from "@/lib/rules-engine"
 import type { AllocationRule } from "@/lib/rules-engine"
+import { rateLimit } from "@/lib/rate-limit"
 
 // GET /api/rules — list active rules for the authed user
 export async function GET() {
@@ -48,12 +49,27 @@ export async function POST(request: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
+  const { allowed } = rateLimit(`rules:write:${user.id}`, { windowMs: 60_000, max: 30 })
+  if (!allowed) return NextResponse.json({ error: "Too many requests" }, { status: 429 })
+
   const body = await request.json()
   const { bucket_name, label, rule_type, value, priority } = body
 
   if (!bucket_name || !label || !rule_type || value === undefined || priority === undefined) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
   }
+
+  // Sanitize inputs
+  const safeBucketName = String(bucket_name).toLowerCase().replace(/[^a-z0-9_]/g, "").slice(0, 64)
+  const safeLabel = String(label).trim().slice(0, 80)
+  const validRuleTypes = ["percentage", "fixed_amount", "remainder"]
+  if (!validRuleTypes.includes(rule_type)) {
+    return NextResponse.json({ error: "Invalid rule_type" }, { status: 400 })
+  }
+  const safeValue = rule_type === "percentage"
+    ? Math.min(Math.max(parseFloat(value) || 0, 0), 100)
+    : Math.max(parseFloat(value) || 0, 0)
+  const safePriority = Math.max(parseInt(priority, 10) || 0, 0)
 
   // Validate against existing rules
   const { data: existing } = await supabase
@@ -62,7 +78,7 @@ export async function POST(request: Request) {
     .eq("user_id", user.id)
     .eq("is_active", true)
 
-  const newRule = { id: "new", bucket_name, label, rule_type, value, priority, is_active: true }
+  const newRule = { id: "new", bucket_name: safeBucketName, label: safeLabel, rule_type, value: safeValue, priority: safePriority, is_active: true }
   const validation = validateRules([...(existing ?? []), newRule] as AllocationRule[])
   if (!validation.valid) {
     return NextResponse.json({ error: validation.errors.join(" ") }, { status: 422 })
@@ -70,7 +86,7 @@ export async function POST(request: Request) {
 
   const { data, error } = await supabase
     .from("allocation_rules")
-    .insert({ user_id: user.id, bucket_name, label, rule_type, value, priority })
+    .insert({ user_id: user.id, bucket_name: safeBucketName, label: safeLabel, rule_type, value: safeValue, priority: safePriority })
     .select()
     .single()
 
@@ -79,7 +95,7 @@ export async function POST(request: Request) {
   // Ensure virtual bucket exists
   await supabase
     .from("virtual_buckets")
-    .upsert({ user_id: user.id, bucket_name, label, current_balance: 0 }, { onConflict: "user_id,bucket_name" })
+    .upsert({ user_id: user.id, bucket_name: safeBucketName, label: safeLabel, current_balance: 0 }, { onConflict: "user_id,bucket_name" })
 
   await supabase.from("event_logs").insert({
     user_id: user.id,

@@ -97,14 +97,14 @@ export default async function DashboardPage() {
 
         {/* Pending plan alert */}
         {pendingPlan && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-5 py-4 flex items-center justify-between">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
             <div>
               <p className="font-medium text-yellow-900 text-sm">Payout plan awaiting approval</p>
               <p className="text-xs text-yellow-700 mt-0.5">
                 {formatCents(pendingPlan.payout_amount)} — review and approve to update your reserves.
               </p>
             </div>
-            <Button asChild size="sm">
+            <Button asChild size="sm" className="self-start sm:self-auto">
               <Link href={`/plans/${pendingPlan.id}`}>Review</Link>
             </Button>
           </div>

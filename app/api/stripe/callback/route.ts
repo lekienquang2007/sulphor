@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import Stripe from "stripe"
 import { createClient } from "@/lib/supabase/server"
+import { encrypt } from "@/lib/crypto"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-03-25.dahlia" })
 
@@ -43,8 +44,8 @@ export async function GET(request: Request) {
     .upsert({
       user_id: user.id,
       stripe_account_id: response.stripe_user_id!,
-      access_token: response.access_token!,
-      refresh_token: response.refresh_token ?? null,
+      access_token: encrypt(response.access_token!),
+      refresh_token: response.refresh_token ? encrypt(response.refresh_token) : null,
       livemode: response.livemode ?? false,
       status: "active",
     }, { onConflict: "user_id" })

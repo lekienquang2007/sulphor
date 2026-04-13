@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import Stripe from "stripe"
 import { createClient } from "@/lib/supabase/server"
 import { syncPayoutsAndBalance } from "@/lib/stripe-sync"
+import { generatePlan } from "@/app/api/payout-plans/route"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-03-25.dahlia" })
 
@@ -47,7 +48,7 @@ export async function POST(request: Request) {
     case "payout.created":
     case "payout.paid": {
       const payout = event.data.object as Stripe.Payout
-      await supabase.from("stripe_payouts").upsert({
+      const { data: upserted } = await supabase.from("stripe_payouts").upsert({
         user_id: userId,
         stripe_payout_id: payout.id,
         amount: payout.amount,
@@ -55,13 +56,18 @@ export async function POST(request: Request) {
         arrival_date: new Date(payout.arrival_date * 1000).toISOString().split("T")[0],
         status: payout.status,
         description: payout.description ?? null,
-      }, { onConflict: "stripe_payout_id" })
+      }, { onConflict: "stripe_payout_id" }).select("id").single()
 
       await supabase.from("event_logs").insert({
         user_id: userId,
         event_type: "payout_synced",
         metadata: { stripe_payout_id: payout.id, event: event.type },
       })
+
+      // Auto-generate plan on paid payouts
+      if (event.type === "payout.paid" && upserted?.id) {
+        generatePlan(supabase, userId, upserted.id).catch(console.error)
+      }
       break
     }
 

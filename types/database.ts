@@ -222,6 +222,7 @@ export interface Database {
           status?: string
           ai_summary?: string | null
           approved_at?: string | null
+          spendable_amount?: number
         }
         Relationships: []
       }

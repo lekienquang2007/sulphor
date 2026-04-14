@@ -1,12 +1,17 @@
 import { NextResponse } from "next/server"
 import Stripe from "stripe"
-import { createClient } from "@/lib/supabase/server"
+import { createClient } from "@supabase/supabase-js"
 import { generatePlan } from "@/lib/generate-plan"
+import type { Database } from "@/types/database"
 
 export const dynamic = 'force-dynamic'
 
 export async function POST(request: Request) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-03-25.dahlia" })
+  const supabase = createClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
   const body = await request.text()
   const sig = request.headers.get("stripe-signature")
 
@@ -21,8 +26,6 @@ export async function POST(request: Request) {
     console.error("Webhook signature verification failed:", err)
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
   }
-
-  const supabase = await createClient()
 
   // Find the user by stripe account id from the event
   const stripeAccountId = (event as Stripe.Event & { account?: string }).account

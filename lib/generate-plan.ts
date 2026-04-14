@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
 import { buildPlan, generatePlanSummary } from "@/lib/plan-generator"
+import type { SupabaseClient } from "@supabase/supabase-js"
 import type { AllocationRule } from "@/lib/rules-engine"
 import type { PrevPlanShape } from "@/types/app"
+import type { Database } from "@/types/database"
 
 export async function generatePlan(
-  supabase: Awaited<ReturnType<typeof createClient>>,
+  supabase: SupabaseClient<Database>,
   userId: string,
   stripePayoutDbId: string
 ) {

@@ -15,7 +15,7 @@ export async function GET() {
     response_type: "code",
     client_id: process.env.STRIPE_CLIENT_ID!,
     scope: "read_only",
-    redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL}/api/stripe/callback`,
+    redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "")}/api/stripe/callback`,
     state: user.id,
   })
 

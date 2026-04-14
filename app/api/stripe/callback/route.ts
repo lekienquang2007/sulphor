@@ -5,6 +5,8 @@ import { encrypt } from "@/lib/crypto"
 
 export const dynamic = 'force-dynamic'
 
+const appUrl = () => process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ?? ""
+
 export async function GET(request: Request) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-03-25.dahlia" })
   const { searchParams } = new URL(request.url)
@@ -14,13 +16,13 @@ export async function GET(request: Request) {
 
   if (error) {
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/connect?error=${encodeURIComponent(error)}`
+      `${appUrl()}/onboarding/connect?error=${encodeURIComponent(error)}`
     )
   }
 
   if (!code || !state) {
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/connect?error=missing_params`
+      `${appUrl()}/onboarding/connect?error=missing_params`
     )
   }
 
@@ -28,9 +30,7 @@ export async function GET(request: Request) {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user || user.id !== state) {
-    return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_APP_URL}/login`
-    )
+    return NextResponse.redirect(`${appUrl()}/login`)
   }
 
   // Exchange code for tokens
@@ -54,7 +54,7 @@ export async function GET(request: Request) {
   if (dbError) {
     console.error("Failed to store Stripe connection:", dbError)
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/connect?error=db_error`
+      `${appUrl()}/onboarding/connect?error=db_error`
     )
   }
 
@@ -66,13 +66,10 @@ export async function GET(request: Request) {
   })
 
   // Trigger initial sync in background
-  const syncUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/stripe/sync`
-  fetch(syncUrl, {
+  fetch(`${appUrl()}/api/stripe/sync`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "x-user-id": user.id },
   }).catch(console.error)
 
-  return NextResponse.redirect(
-    `${process.env.NEXT_PUBLIC_APP_URL}/onboarding/syncing`
-  )
+  return NextResponse.redirect(`${appUrl()}/onboarding/syncing`)
 }

@@ -26,7 +26,7 @@ export default function ConnectStripePage({
         <h1 className="text-2xl font-semibold text-gray-900 mb-2">Connect your Stripe account</h1>
         <p className="text-gray-500 text-sm mb-6">
           We&apos;ll read your payout history and balance to build your operating plan.
-          Read-only access — we never move money.
+          We never initiate transfers, move funds, or modify your Stripe account in any way.
         </p>
 
         <ul className="text-left text-sm text-gray-600 space-y-2 mb-8">
@@ -37,7 +37,10 @@ export default function ConnectStripePage({
             <span className="text-green-500">✓</span> Read current balance
           </li>
           <li className="flex items-center gap-2">
-            <span className="text-red-400">✗</span> Cannot move or access funds
+            <span className="text-red-400">✗</span> We never move or modify funds
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="text-red-400">✗</span> We never create charges or payouts
           </li>
         </ul>
 

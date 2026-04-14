@@ -14,7 +14,7 @@ export async function GET() {
   const params = new URLSearchParams({
     response_type: "code",
     client_id: process.env.STRIPE_CLIENT_ID!,
-    scope: "read_write",
+    scope: "read_only",
     redirect_uri: `${process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "")}/api/stripe/callback`,
     state: user.id,
   })

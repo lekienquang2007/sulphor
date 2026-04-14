@@ -7,15 +7,16 @@ export async function syncPayoutsAndBalance(
   userId: string,
   accessToken: string
 ) {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-03-25.dahlia" })
+  // Use the connected account's OAuth token as the API key so all calls
+  // operate on their account, not Sulphor's platform account.
+  const stripe = new Stripe(accessToken, { apiVersion: "2026-03-25.dahlia" })
   // Sync last 12 months of payouts
   const twelveMonthsAgo = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 365
 
   // Auto-paginate
   const allPayouts: Stripe.Payout[] = []
   for await (const payout of stripe.payouts.list(
-    { limit: 100, created: { gte: twelveMonthsAgo } },
-    { headers: { Authorization: `Bearer ${accessToken}` } }
+    { limit: 100, created: { gte: twelveMonthsAgo } }
   )) {
     allPayouts.push(payout)
   }
@@ -39,10 +40,7 @@ export async function syncPayoutsAndBalance(
   }
 
   // Sync balance snapshot
-  const balance = await stripe.balance.retrieve(
-    {},
-    { headers: { Authorization: `Bearer ${accessToken}` } }
-  )
+  const balance = await stripe.balance.retrieve()
 
   const usdAvailable = balance.available.find((b) => b.currency === "usd")
   const usdPending = balance.pending.find((b) => b.currency === "usd")

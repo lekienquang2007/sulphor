@@ -69,7 +69,7 @@ export async function POST(request: Request) {
 
       // Auto-generate plan on paid payouts
       if (event.type === "payout.paid" && upserted?.id) {
-        generatePlan(supabase, userId, upserted.id).catch(console.error)
+        await generatePlan(supabase, userId, upserted.id)
       }
       break
     }

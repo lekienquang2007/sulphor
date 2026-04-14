@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import Stripe from "stripe"
 import { createClient } from "@supabase/supabase-js"
 import { generatePlan } from "@/lib/generate-plan"
+import { decrypt } from "@/lib/crypto"
 import type { Database } from "@/types/database"
 
 export const dynamic = 'force-dynamic'
@@ -67,9 +68,28 @@ export async function POST(request: Request) {
         metadata: { stripe_payout_id: payout.id, event: event.type },
       })
 
-      // Auto-generate plan on paid payouts
+      // Auto-generate plan on paid payouts and refresh balance snapshot
       if (event.type === "payout.paid" && upserted?.id) {
         await generatePlan(supabase, userId, upserted.id)
+
+        // Refresh balance snapshot using the connected account's access token
+        try {
+          const accessToken = decrypt(connection.access_token)
+          const balance = await stripe.balance.retrieve(
+            {},
+            { headers: { Authorization: `Bearer ${accessToken}` } }
+          )
+          const usdAvailable = balance.available.find((b) => b.currency === "usd")
+          const usdPending = balance.pending.find((b) => b.currency === "usd")
+          await supabase.from("stripe_balance_snapshots").insert({
+            user_id: userId,
+            available_amount: usdAvailable?.amount ?? 0,
+            pending_amount: usdPending?.amount ?? 0,
+            currency: "usd",
+          })
+        } catch (err) {
+          console.error("Balance refresh failed:", err)
+        }
       }
       break
     }

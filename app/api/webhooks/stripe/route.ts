@@ -2,7 +2,6 @@ import { NextResponse } from "next/server"
 import Stripe from "stripe"
 import { createClient } from "@supabase/supabase-js"
 import { generatePlan } from "@/lib/generate-plan"
-import { decrypt } from "@/lib/crypto"
 import type { Database } from "@/types/database"
 
 export const dynamic = 'force-dynamic'
@@ -72,12 +71,11 @@ export async function POST(request: Request) {
       if (event.type === "payout.paid" && upserted?.id) {
         await generatePlan(supabase, userId, upserted.id)
 
-        // Refresh balance snapshot using the connected account's access token
+        // Refresh balance snapshot for the connected account
         try {
-          const accessToken = decrypt(connection.access_token)
           const balance = await stripe.balance.retrieve(
             {},
-            { headers: { Authorization: `Bearer ${accessToken}` } }
+            { stripeAccount: stripeAccountId }
           )
           const usdAvailable = balance.available.find((b) => b.currency === "usd")
           const usdPending = balance.pending.find((b) => b.currency === "usd")

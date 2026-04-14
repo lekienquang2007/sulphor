@@ -54,5 +54,9 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.json({ refreshed })
+  // Prune old data daily (event_logs and balance_snapshots older than 90 days)
+  const { data: pruned, error: pruneErr } = await supabase.rpc("prune_old_data")
+  if (pruneErr) console.error("Pruning failed:", pruneErr)
+
+  return NextResponse.json({ refreshed, pruned: pruned ?? null })
 }

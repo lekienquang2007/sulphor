@@ -15,21 +15,16 @@ export default function SyncingPage() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setStepIndex((prev) => {
-        if (prev < steps.length - 1) return prev + 1
-        return prev
-      })
+      setStepIndex((prev) => (prev < steps.length - 1 ? prev + 1 : prev))
     }, 1800)
 
-    // After sync completes (enough time for backend), redirect to rules setup
-    const timeout = setTimeout(() => {
-      router.push("/onboarding/rules")
-    }, 6000)
+    // Actually run the sync, then redirect when done
+    fetch("/api/stripe/sync", { method: "POST", headers: { "Content-Type": "application/json" } })
+      .finally(() => {
+        router.push("/onboarding/rules")
+      })
 
-    return () => {
-      clearInterval(interval)
-      clearTimeout(timeout)
-    }
+    return () => clearInterval(interval)
   }, [router])
 
   return (

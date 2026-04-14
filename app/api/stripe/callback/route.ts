@@ -65,11 +65,5 @@ export async function GET(request: Request) {
     metadata: { stripe_account_id: response.stripe_user_id },
   })
 
-  // Trigger initial sync in background
-  fetch(`${appUrl()}/api/stripe/sync`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "x-user-id": user.id },
-  }).catch(console.error)
-
   return NextResponse.redirect(`${appUrl()}/onboarding/syncing`)
 }

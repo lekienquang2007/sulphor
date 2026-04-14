@@ -106,7 +106,7 @@ export async function POST(request: Request) {
 }
 
 async function handlePayoutUpdate(
-  supabase: ReturnType<typeof createClient> extends Promise<infer T> ? T : never,
+  supabase: import("@supabase/supabase-js").SupabaseClient<import("@/types/database").Database>,
   userId: string,
   payout: Stripe.Payout
 ) {
@@ -124,7 +124,7 @@ async function handlePayoutUpdate(
 }
 
 async function handlePayoutFailure(
-  supabase: ReturnType<typeof createClient> extends Promise<infer T> ? T : never,
+  supabase: import("@supabase/supabase-js").SupabaseClient<import("@/types/database").Database>,
   userId: string,
   payout: Stripe.Payout
 ) {

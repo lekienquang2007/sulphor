@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { PlanWithRelations } from "@/types/app"
+import DashboardAssistant from "@/components/dashboard-assistant"
 
 function statusVariant(status: string) {
   if (status === "approved") return "success"
@@ -179,6 +180,9 @@ export default async function DashboardPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* AI rule drafting */}
+        <DashboardAssistant />
 
         {/* Recent plans */}
         <Card>

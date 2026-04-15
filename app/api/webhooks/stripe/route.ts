@@ -27,6 +27,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
   }
 
+  if (process.env.NODE_ENV === 'production' && !event.livemode) {
+    return NextResponse.json({ received: true });
+  }
+
   // Find the user by stripe account id from the event
   const stripeAccountId = (event as Stripe.Event & { account?: string }).account
 

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { PlanWithRelations } from "@/types/app"
 import DashboardAssistant from "@/components/dashboard-assistant"
+import ReservesCard from "@/components/reserves-card"
 
 function statusVariant(status: string) {
   if (status === "approved") return "success"
@@ -155,31 +156,7 @@ export default async function DashboardPage() {
         </Card>
 
         {/* Virtual buckets */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Reserves</CardTitle>
-              <span className="money text-sm text-muted-foreground">{formatCents(totalReserved)} total</span>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {buckets.length === 0 ? (
-              <div className="py-4 text-center">
-                <p className="text-sm text-muted-foreground">No reserves yet.</p>
-                <p className="text-xs text-muted-foreground mt-1">Approve a payout plan to start building virtual reserves.</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {buckets.map((b) => (
-                  <div key={b.id} className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-foreground">{b.label}</p>
-                    <p className="money text-sm font-semibold text-foreground">{formatCents(b.current_balance)}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <ReservesCard buckets={buckets} totalReserved={totalReserved} />
 
         {/* AI rule drafting */}
         <DashboardAssistant />

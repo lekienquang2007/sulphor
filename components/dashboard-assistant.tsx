@@ -302,10 +302,10 @@ export default function DashboardAssistant() {
 
         {/* Input area */}
         {!draft && (
-          <div className={`relative ${hasMessages ? "px-4 pb-4 pt-3" : "p-4"}`}>
+          <div className={hasMessages ? "px-4 pb-4 pt-3" : "p-4"}>
             <textarea
               ref={textareaRef}
-              className="w-full text-sm bg-muted/40 border border-border rounded-xl px-4 py-3 pb-10 resize-none focus:outline-none focus:ring-2 focus:ring-ring focus:bg-background transition-colors placeholder:text-muted-foreground/50 leading-relaxed"
+              className="w-full text-sm bg-muted/40 border border-border rounded-xl px-4 py-3 resize-none focus:outline-none focus:ring-2 focus:ring-ring focus:bg-background transition-colors placeholder:text-muted-foreground/50 leading-relaxed"
               rows={hasMessages ? 2 : 3}
               placeholder={
                 hasMessages
@@ -319,24 +319,20 @@ export default function DashboardAssistant() {
               }}
               disabled={loading}
             />
-            <div className="absolute bottom-7 right-7 flex items-center gap-3">
-              {!hasMessages && (
-                <span className="text-xs text-muted-foreground/40 select-none">⌘↵</span>
-              )}
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-xs text-muted-foreground/50">
+                {hasMessages
+                  ? <span className="select-none">⌘↵ to send</span>
+                  : "Drafts allocation rules from your description. Not tax or financial advice."}
+              </p>
               <Button
                 size="sm"
                 onClick={send}
                 disabled={!input.trim() || loading}
-                className="h-7 px-3 text-xs"
               >
                 {loading ? "..." : "Send"}
               </Button>
             </div>
-            {!hasMessages && (
-              <p className="mt-2 text-xs text-muted-foreground/50 px-1">
-                Drafts allocation rules from your description. Not tax or financial advice.
-              </p>
-            )}
           </div>
         )}
 

@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { formatDate } from "@/lib/utils"
 import LogoutButton from "./logout-button"
+import SettingsRulesSection from "@/components/settings-rules-section"
+import type { AllocationRule } from "@/lib/rules-engine"
 
 export default async function SettingsPage() {
   const supabase = await createClient()
@@ -80,32 +82,7 @@ export default async function SettingsPage() {
         </Card>
 
         {/* Rules */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Allocation Rules</CardTitle>
-              <Button asChild size="sm" variant="outline">
-                <Link href="/onboarding/rules">Edit rules</Link>
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {!rules || rules.length === 0 ? (
-              <p className="text-sm text-muted-foreground/70">No rules configured.</p>
-            ) : (
-              <div className="space-y-2">
-                {rules.map((r) => (
-                  <div key={r.id} className="flex justify-between text-sm">
-                    <span className="text-foreground/80">{r.label}</span>
-                    <span className="text-muted-foreground">
-                      {r.rule_type === "percentage" ? `${r.value}%` : r.rule_type === "fixed_amount" ? `$${r.value}` : "remainder"}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <SettingsRulesSection initialRules={(rules ?? []) as AllocationRule[]} />
 
         {/* Account */}
         <Card>

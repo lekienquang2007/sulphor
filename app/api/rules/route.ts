@@ -99,10 +99,10 @@ export async function POST(request: Request) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  // Ensure virtual bucket exists
+  // Ensure virtual bucket exists — never overwrite current_balance
   await supabase
     .from("virtual_buckets")
-    .upsert({ user_id: user.id, bucket_name: safeBucketName, label: safeLabel, current_balance: 0 }, { onConflict: "user_id,bucket_name" })
+    .upsert({ user_id: user.id, bucket_name: safeBucketName, label: safeLabel }, { onConflict: "user_id,bucket_name" })
 
   await supabase.from("event_logs").insert({
     user_id: user.id,
@@ -145,12 +145,12 @@ export async function PUT(request: Request) {
       .eq("id", rule.id)
       .eq("user_id", user.id)
 
-    // Keep virtual bucket label in sync
+    // Keep virtual bucket label in sync — never overwrite current_balance
     if (rule.is_active) {
       await supabase
         .from("virtual_buckets")
         .upsert(
-          { user_id: user.id, bucket_name: rule.bucket_name, label: rule.label, current_balance: 0 },
+          { user_id: user.id, bucket_name: rule.bucket_name, label: rule.label },
           { onConflict: "user_id,bucket_name" }
         )
     }

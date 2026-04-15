@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { formatCents } from "@/lib/utils"
 import type { AllocationRule, RuleType } from "@/lib/rules-engine"
 import { checkAllocationOverflow } from "@/lib/rules-engine"
+import AssistantPanel from "@/components/assistant-panel"
 
 const PREVIEW_AMOUNT = 500000 // $5,000 in cents
 
@@ -135,6 +136,8 @@ export default function RulesSetupPage() {
         <p className="text-sm text-gray-500 mb-8">
           These rules decide how every payout is split. Applied in order, top to bottom.
         </p>
+
+        <AssistantPanel existingRules={rules} onApproved={fetchRules} />
 
         {/* Rules list */}
         <div className="space-y-2 mb-6">

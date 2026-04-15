@@ -22,6 +22,28 @@ export async function generatePlan(
     return NextResponse.json({ error: "Payout not found" }, { status: 404 })
   }
 
+  // Enforce free tier limit (10 processed payout plans)
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("subscription_status")
+    .eq("id", userId)
+    .single()
+
+  if (profile?.subscription_status !== "active") {
+    const { count } = await supabase
+      .from("payout_plans")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .neq("status", "reversed")
+
+    if ((count ?? 0) >= 10) {
+      return NextResponse.json(
+        { error: "Free plan limit reached. Upgrade to Standard to keep processing payouts.", upgrade_required: true },
+        { status: 402 }
+      )
+    }
+  }
+
   // Check if plan already exists
   const { data: existing } = await supabase
     .from("payout_plans")

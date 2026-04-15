@@ -64,6 +64,7 @@ export default async function HistoryPage() {
         <nav className="flex items-center gap-4 text-sm">
           <Link href="/dashboard" className="text-muted-foreground hover:text-foreground">Home</Link>
           <Link href="/history" className="text-foreground font-medium">History</Link>
+          <Link href="/pricing" className="text-muted-foreground hover:text-foreground">Pricing</Link>
           <Link href="/settings" className="text-muted-foreground hover:text-foreground">Settings</Link>
         </nav>
       </header>

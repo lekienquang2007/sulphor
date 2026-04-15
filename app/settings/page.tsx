@@ -14,17 +14,33 @@ export default async function SettingsPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect("/login")
 
-  const { data: connection } = await supabase
-    .from("stripe_connections")
-    .select("stripe_account_id, status, livemode, last_synced_at")
-    .eq("user_id", user.id)
-    .single()
+  const [connectionRes, profileRes, planCountRes, rulesRes] = await Promise.all([
+    supabase
+      .from("stripe_connections")
+      .select("stripe_account_id, status, livemode, last_synced_at")
+      .eq("user_id", user.id)
+      .single(),
+    supabase
+      .from("profiles")
+      .select("subscription_status, stripe_customer_id")
+      .eq("id", user.id)
+      .single(),
+    supabase
+      .from("payout_plans")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .neq("status", "reversed"),
+    supabase
+      .from("allocation_rules")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("priority", { ascending: true }),
+  ])
 
-  const { data: rules } = await supabase
-    .from("allocation_rules")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("priority", { ascending: true })
+  const connection = connectionRes.data
+  const subStatus = profileRes.data?.subscription_status ?? "free"
+  const planCount = planCountRes.count ?? 0
+  const rules = rulesRes.data
 
   return (
     <div className="min-h-screen bg-background">
@@ -33,11 +49,49 @@ export default async function SettingsPage() {
         <nav className="flex items-center gap-4 text-sm">
           <Link href="/dashboard" className="text-muted-foreground hover:text-foreground">Home</Link>
           <Link href="/history" className="text-muted-foreground hover:text-foreground">History</Link>
+          <Link href="/pricing" className="text-muted-foreground hover:text-foreground">Pricing</Link>
           <Link href="/settings" className="text-foreground font-medium">Settings</Link>
         </nav>
       </header>
 
       <main className="max-w-xl mx-auto px-4 py-8 space-y-6">
+
+        {/* Billing */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>Plan</CardTitle>
+              <Badge variant={subStatus === "active" ? "success" : subStatus === "past_due" ? "destructive" : "outline"}>
+                {subStatus === "active" ? "Standard" : subStatus === "past_due" ? "Past due" : "Free"}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {subStatus === "active" ? (
+              <>
+                <p className="text-sm text-muted-foreground">Unlimited payouts · $9.99/month</p>
+                <Button asChild size="sm" variant="outline">
+                  <Link href="/api/billing/portal">Manage subscription</Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Payouts processed</span>
+                  <span className={planCount >= 10 ? "text-red-600 font-semibold" : "text-foreground font-medium"}>
+                    {planCount} / 10
+                  </span>
+                </div>
+                {planCount >= 10 && (
+                  <p className="text-xs text-red-600">Free limit reached. Upgrade to keep processing payouts.</p>
+                )}
+                <Button asChild size="sm">
+                  <Link href="/api/billing/checkout">Upgrade to Standard — $9.99/mo</Link>
+                </Button>
+              </>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Stripe connection */}
         <Card>

@@ -32,7 +32,9 @@ export default async function DashboardPage() {
   if (!connection) redirect("/onboarding/connect")
 
   // Parallel data fetch
-  const [bucketsRes, snapshotRes, plansRes, pendingPayoutRes] = await Promise.all([
+  const [profileRes, planCountRes, bucketsRes, snapshotRes, plansRes, pendingPayoutRes] = await Promise.all([
+    supabase.from("profiles").select("subscription_status").eq("id", user.id).single(),
+    supabase.from("payout_plans").select("*", { count: "exact", head: true }).eq("user_id", user.id).neq("status", "reversed"),
     supabase
       .from("virtual_buckets")
       .select("*")
@@ -64,6 +66,10 @@ export default async function DashboardPage() {
       .single(),
   ])
 
+  const subStatus = profileRes.data?.subscription_status ?? "free"
+  const planCount = planCountRes.count ?? 0
+  const showUpgradeBanner = subStatus !== "active" && planCount >= 7
+
   const buckets = bucketsRes.data ?? []
   const balance = snapshotRes.data
   const plans = (plansRes.data as unknown as PlanWithRelations[]) ?? []
@@ -91,11 +97,31 @@ export default async function DashboardPage() {
         <nav className="flex items-center gap-4 text-sm">
           <Link href="/dashboard" className="text-foreground font-medium">Home</Link>
           <Link href="/history" className="text-muted-foreground hover:text-foreground">History</Link>
+          <Link href="/pricing" className="text-muted-foreground hover:text-foreground">Pricing</Link>
           <Link href="/settings" className="text-muted-foreground hover:text-foreground">Settings</Link>
         </nav>
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+
+        {/* Free tier upgrade nudge */}
+        {showUpgradeBanner && (
+          <div className="bg-muted border border-border rounded-lg px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:justify-between">
+            <div>
+              <p className="font-medium text-foreground text-sm">
+                {planCount >= 10 ? "Free plan limit reached" : `${planCount} of 10 free payouts used`}
+              </p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {planCount >= 10
+                  ? "Upgrade to Standard to continue processing new payouts."
+                  : `${10 - planCount} remaining. Upgrade anytime to unlock unlimited payouts.`}
+              </p>
+            </div>
+            <Button asChild size="sm" className="self-start sm:self-auto shrink-0">
+              <Link href="/api/billing/checkout">Upgrade — $9.99/mo</Link>
+            </Button>
+          </div>
+        )}
 
         {/* Pending plan alert */}
         {pendingPlan && (

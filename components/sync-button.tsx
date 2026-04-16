@@ -12,7 +12,7 @@ export default function SyncButton() {
     setLoading(true)
     setDone(false)
     try {
-      await fetch("/api/stripe/sync", { method: "POST" })
+      await fetch("/api/stripe/sync-balance", { method: "POST" })
       router.refresh()
       setDone(true)
       setTimeout(() => setDone(false), 3000)

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import type { PlanWithRelations } from "@/types/app"
 import DashboardAssistant from "@/components/dashboard-assistant"
 import ReservesCard from "@/components/reserves-card"
+import SyncButton from "@/components/sync-button"
 
 function statusVariant(status: string) {
   if (status === "approved") return "success"
@@ -170,12 +171,15 @@ export default async function DashboardPage() {
               ) : (
                 <p className="text-sm text-muted-foreground">No balance data yet</p>
               )}
-              <div className="text-sm text-muted-foreground">
-                Next payout:{" "}
-                {nextPayout
-                  ? <span className="font-medium text-foreground">Expected {formatDate(nextPayout.arrival_date)}</span>
-                  : <span>No upcoming payout</span>
-                }
+              <div className="flex items-center gap-3">
+                <div className="text-sm text-muted-foreground">
+                  Next payout:{" "}
+                  {nextPayout
+                    ? <span className="font-medium text-foreground">Expected {formatDate(nextPayout.arrival_date)}</span>
+                    : <span>No upcoming payout</span>
+                  }
+                </div>
+                <SyncButton />
               </div>
             </div>
           </CardContent>

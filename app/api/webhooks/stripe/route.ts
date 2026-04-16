@@ -37,6 +37,8 @@ export async function POST(request: Request) {
   // Find the user by stripe account id from the event
   const stripeAccountId = (event as Stripe.Event & { account?: string }).account
 
+  console.log(`[webhook] event=${event.type} livemode=${event.livemode} account=${stripeAccountId ?? "none"}`)
+
   // Platform-level events (no connected account) — handle subscription lifecycle
   if (!stripeAccountId) {
     switch (event.type) {
@@ -93,16 +95,18 @@ export async function POST(request: Request) {
     .single()
 
   if (!connection) {
+    console.error(`[webhook] No active stripe_connection found for account ${stripeAccountId}`)
     return NextResponse.json({ received: true })
   }
 
   const userId = connection.user_id
+  console.log(`[webhook] matched user ${userId} for account ${stripeAccountId}`)
 
   switch (event.type) {
     case "payout.created":
     case "payout.paid": {
       const payout = event.data.object as Stripe.Payout
-      const { data: upserted } = await supabase.from("stripe_payouts").upsert({
+      const { data: upserted, error: upsertErr } = await supabase.from("stripe_payouts").upsert({
         user_id: userId,
         stripe_payout_id: payout.id,
         amount: payout.amount,
@@ -112,6 +116,9 @@ export async function POST(request: Request) {
         description: payout.description ?? null,
       }, { onConflict: "stripe_payout_id" }).select("id").single()
 
+      if (upsertErr) console.error(`[webhook] payout upsert failed:`, upsertErr)
+      console.log(`[webhook] payout upserted db_id=${upserted?.id} stripe_id=${payout.id}`)
+
       await supabase.from("event_logs").insert({
         user_id: userId,
         event_type: "payout_synced",
@@ -120,7 +127,9 @@ export async function POST(request: Request) {
 
       // Auto-generate plan on paid payouts and refresh balance snapshot
       if (event.type === "payout.paid" && upserted?.id) {
-        await generatePlan(supabase, userId, upserted.id)
+        console.log(`[webhook] calling generatePlan for db_id=${upserted.id}`)
+        const planRes = await generatePlan(supabase, userId, upserted.id)
+        console.log(`[webhook] generatePlan status=${planRes.status}`)
 
         // Refresh balance snapshot for the connected account
         try {

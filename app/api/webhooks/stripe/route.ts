@@ -27,8 +27,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
   }
 
-  if (process.env.NODE_ENV === 'production' && !event.livemode) {
-    return NextResponse.json({ received: true });
+  // Only block test events when STRIPE_REQUIRE_LIVEMODE=true is explicitly set.
+  // Do NOT use NODE_ENV — Vercel is always 'production' even during test mode testing.
+  if (process.env.STRIPE_REQUIRE_LIVEMODE === 'true' && !event.livemode) {
+    console.log(`Skipping test-mode event ${event.type} (STRIPE_REQUIRE_LIVEMODE=true)`)
+    return NextResponse.json({ received: true })
   }
 
   // Find the user by stripe account id from the event

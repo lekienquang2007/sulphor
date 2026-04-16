@@ -5,16 +5,21 @@ import { createClient } from "@/lib/supabase/server"
 export const dynamic = "force-dynamic"
 
 // GET /api/billing/portal — open Stripe Customer Portal for subscription management
-export async function GET() {
+export async function GET(request: Request) {
+  const { origin } = new URL(request.url)
+
   const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL!
-
   if (!user) {
-    return NextResponse.redirect(`${appUrl}/login`)
+    return NextResponse.redirect(`${origin}/login`)
+  }
+
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.error("STRIPE_SECRET_KEY is not set")
+    return NextResponse.json({ error: "Billing not configured" }, { status: 500 })
   }
 
   const { data: profile } = await supabase
@@ -24,17 +29,21 @@ export async function GET() {
     .single()
 
   if (!profile?.stripe_customer_id) {
-    return NextResponse.redirect(`${appUrl}/pricing`)
+    return NextResponse.redirect(`${origin}/pricing`)
   }
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
     apiVersion: "2026-03-25.dahlia",
   })
 
-  const session = await stripe.billingPortal.sessions.create({
-    customer: profile.stripe_customer_id,
-    return_url: `${appUrl}/settings`,
-  })
-
-  return NextResponse.redirect(session.url)
+  try {
+    const session = await stripe.billingPortal.sessions.create({
+      customer: profile.stripe_customer_id,
+      return_url: `${origin}/settings`,
+    })
+    return NextResponse.redirect(session.url)
+  } catch (err) {
+    console.error("Stripe portal error:", err)
+    return NextResponse.json({ error: "Failed to open billing portal" }, { status: 500 })
+  }
 }

@@ -46,12 +46,17 @@ export async function POST(request: Request) {
         const session = event.data.object as Stripe.Checkout.Session
         if (session.mode !== "subscription") break
         const userId = session.metadata?.user_id
-        if (!userId) break
-        await supabase.from("profiles").update({
+        if (!userId) {
+          console.error("[webhook] checkout.session.completed: no user_id in metadata", session.id)
+          break
+        }
+        const { error } = await supabase.from("profiles").update({
           stripe_customer_id: session.customer as string,
           subscription_id: session.subscription as string,
           subscription_status: "active",
         }).eq("id", userId)
+        if (error) console.error("[webhook] checkout.session.completed: profile update failed", error)
+        else console.log(`[webhook] checkout.session.completed: set active for user ${userId}`)
         break
       }
       case "customer.subscription.updated": {
@@ -64,23 +69,26 @@ export async function POST(request: Request) {
         }
         const status = statusMap[sub.status] ?? "free"
         const query = supabase.from("profiles").update({ subscription_status: status, subscription_id: sub.id })
-        if (userId) { await query.eq("id", userId) }
-        else { await query.eq("stripe_customer_id", sub.customer as string) }
+        const { error } = userId ? await query.eq("id", userId) : await query.eq("stripe_customer_id", sub.customer as string)
+        if (error) console.error("[webhook] customer.subscription.updated: update failed", error)
+        else console.log(`[webhook] customer.subscription.updated: status=${status}`)
         break
       }
       case "customer.subscription.deleted": {
         const sub = event.data.object as Stripe.Subscription
         const userId = sub.metadata?.user_id
         const query = supabase.from("profiles").update({ subscription_status: "free", subscription_id: null })
-        if (userId) { await query.eq("id", userId) }
-        else { await query.eq("stripe_customer_id", sub.customer as string) }
+        const { error } = userId ? await query.eq("id", userId) : await query.eq("stripe_customer_id", sub.customer as string)
+        if (error) console.error("[webhook] customer.subscription.deleted: update failed", error)
+        else console.log(`[webhook] customer.subscription.deleted: reset to free`)
         break
       }
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice
-        await supabase.from("profiles")
+        const { error } = await supabase.from("profiles")
           .update({ subscription_status: "past_due" })
           .eq("stripe_customer_id", invoice.customer as string)
+        if (error) console.error("[webhook] invoice.payment_failed: update failed", error)
         break
       }
     }

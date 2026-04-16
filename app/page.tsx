@@ -26,7 +26,10 @@ export default function LandingPage() {
       <header className="border-b border-gray-100 px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <span className="font-semibold text-gray-900 tracking-tight">Sulphor</span>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
+            <Link href="/pricing" className="text-sm text-gray-500 hover:text-gray-900">
+              Pricing
+            </Link>
             <Button variant="ghost" size="sm" asChild>
               <Link href="/login">Sign in</Link>
             </Button>
@@ -93,6 +96,29 @@ export default function LandingPage() {
             </li>
           ))}
         </ol>
+      </section>
+
+      {/* Pricing teaser */}
+      <section className="max-w-3xl mx-auto px-6 py-16">
+        <h2 className="text-xl font-semibold text-gray-900 mb-2 text-center">Simple pricing</h2>
+        <p className="text-sm text-gray-500 text-center mb-8">Start free. Upgrade when your payouts keep coming.</p>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div className="border border-gray-200 rounded-xl p-6">
+            <p className="text-sm font-medium text-gray-500 mb-1">Free</p>
+            <p className="text-2xl font-bold text-gray-900 mb-3">$0</p>
+            <p className="text-sm text-gray-500">10 payouts processed, then upgrade.</p>
+          </div>
+          <div className="border-2 border-gray-900 rounded-xl p-6">
+            <p className="text-sm font-medium text-gray-500 mb-1">Standard</p>
+            <p className="text-2xl font-bold text-gray-900 mb-3">$9.99<span className="text-base font-normal text-gray-400">/mo</span></p>
+            <p className="text-sm text-gray-500">Unlimited payouts. Cancel anytime.</p>
+          </div>
+        </div>
+        <p className="text-center mt-4">
+          <Link href="/pricing" className="text-sm text-gray-500 underline underline-offset-2 hover:text-gray-900">
+            See full plan details →
+          </Link>
+        </p>
       </section>
 
       {/* Bottom CTA */}

@@ -16,6 +16,9 @@ export interface Database {
           business_name: string | null
           onboarding_complete: boolean
           created_at: string
+          stripe_customer_id: string | null
+          subscription_id: string | null
+          subscription_status: string
         }
         Insert: {
           id: string
@@ -23,11 +26,17 @@ export interface Database {
           business_name?: string | null
           onboarding_complete?: boolean
           created_at?: string
+          stripe_customer_id?: string | null
+          subscription_id?: string | null
+          subscription_status?: string
         }
         Update: {
           display_name?: string | null
           business_name?: string | null
           onboarding_complete?: boolean
+          stripe_customer_id?: string | null
+          subscription_id?: string | null
+          subscription_status?: string
         }
         Relationships: []
       }

@@ -43,7 +43,8 @@ export async function GET(request: Request) {
     })
     return NextResponse.redirect(session.url)
   } catch (err) {
-    console.error("Stripe portal error:", err)
-    return NextResponse.json({ error: "Failed to open billing portal" }, { status: 500 })
+    const message = err instanceof Error ? err.message : String(err)
+    console.error("Stripe portal error:", message)
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

@@ -72,3 +72,34 @@
   0%, 100% { opacity: 1; }
   50%       { opacity: 0; }
 }
+
+/* Legal page prose */
+.prose-style p {
+  color: #5C5852;
+  font-size: 1rem;
+  line-height: 1.75;
+  margin-bottom: 1.25rem;
+}
+.prose-style ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1.25rem;
+}
+.prose-style ul li {
+  color: #5C5852;
+  font-size: 1rem;
+  line-height: 1.75;
+  padding-left: 1.25rem;
+  position: relative;
+  margin-bottom: 0.5rem;
+}
+.prose-style ul li::before {
+  content: "–";
+  position: absolute;
+  left: 0;
+  color: #9B9590;
+}
+.prose-style strong {
+  color: #2C3340;
+  font-weight: 600;
+}

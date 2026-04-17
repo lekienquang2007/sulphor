@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { DashboardMockup } from "@/components/landing-mockup";
+import { AiPlannerChat } from "@/components/ai-planner-chat";
 
 const painPoints = [
   "Your payout hit but you spent some before setting aside for taxes.",
@@ -201,59 +202,8 @@ export default function LandingPage() {
               Describe your business once. Get a recommended bucket plan.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Frame 1 */}
-            <div className="border border-[#E8E4DF] rounded-2xl p-5 bg-white">
-              <p className="text-[10px] font-semibold text-[#9B9590] uppercase tracking-[0.15em] mb-3">
-                You write
-              </p>
-              <div className="bg-[#F7F5F2] rounded-xl p-4">
-                <p className="text-[#5C5852] text-sm leading-relaxed">
-                  &ldquo;I&rsquo;m a freelancer earning ~$8k/month in Stripe. I need to
-                  handle taxes (around 30%) and want to pay myself $3,000/month
-                  consistently.&rdquo;
-                </p>
-              </div>
-            </div>
-
-            {/* Frame 2 */}
-            <div className="border border-[#E8E4DF] rounded-2xl p-5 bg-white">
-              <p className="text-[10px] font-semibold text-[#9B9590] uppercase tracking-[0.15em] mb-3">
-                Sulphor asks
-              </p>
-              <div className="bg-[#F7F5F2] rounded-xl p-4">
-                <p className="text-[#5C5852] text-sm leading-relaxed">
-                  Got it. One follow-up — do you have recurring business costs
-                  like ads or software you&rsquo;d want to set aside for each payout?
-                </p>
-              </div>
-            </div>
-
-            {/* Frame 3 */}
-            <div className="border border-[#E8E4DF] rounded-2xl p-5 bg-white">
-              <p className="text-[10px] font-semibold text-[#9B9590] uppercase tracking-[0.15em] mb-3">
-                Your plan
-              </p>
-              <div className="bg-[#F7F5F2] rounded-xl p-4">
-                <div className="space-y-0">
-                  {[
-                    { label: "Tax Holdback", value: "30%" },
-                    { label: "Owner Pay", value: "$3,000" },
-                    { label: "Ad Spend", value: "10%" },
-                    { label: "Operating Buffer", value: "5%" },
-                    { label: "Savings", value: "Remainder" },
-                  ].map((r) => (
-                    <div
-                      key={r.label}
-                      className="flex justify-between text-sm py-2 border-b border-[#E8E4DF] last:border-0"
-                    >
-                      <span className="text-[#5C5852]">{r.label}</span>
-                      <span className="font-medium text-[#2C3340]">{r.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+          <div className="max-w-md mx-auto">
+            <AiPlannerChat />
           </div>
         </div>
       </section>

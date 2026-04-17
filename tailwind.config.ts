@@ -62,7 +62,7 @@ const config: Config = {
       keyframes: {
         float: {
           "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-14px)" },
+          "50%": { transform: "translateY(-6px)" },
         },
       },
     },

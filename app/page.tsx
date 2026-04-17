@@ -12,7 +12,7 @@ const steps = [
   {
     n: "01",
     title: "Connect Stripe",
-    desc: "OAuth in 30 seconds. Read-only access. No credentials stored, no money movement.",
+    desc: "OAuth in 30 seconds. No credentials stored, no money movement.",
   },
   {
     n: "02",
@@ -50,11 +50,12 @@ const features = [
 ];
 
 const freeBullets = [
+  "Unlimited payouts tracked",
   "5 payout plans included",
   "Full app access",
   "Custom buckets",
   "AI planner (limited)",
-  "Upgrade anytime",
+  "Full payout history",
 ];
 
 const proBullets = [
@@ -81,7 +82,7 @@ export default function LandingPage() {
             <Link href="#contact" className="hover:text-[#2C3340] transition-colors">
               Contact
             </Link>
-            <Link href="#disclaimer" className="hover:text-[#2C3340] transition-colors">
+            <Link href="/disclaimer" className="hover:text-[#2C3340] transition-colors">
               Disclaimer
             </Link>
             <Link href="/login" className="hover:text-[#2C3340] transition-colors">
@@ -141,12 +142,12 @@ export default function LandingPage() {
               </a>
             </div>
             <p className="text-xs text-[#9B9590]">
-              Read-only access · No money moved · Cancel anytime
+              No money moved · Cancel anytime
             </p>
           </div>
 
-          {/* Floating mockup */}
-          <div className="flex-1 w-full flex justify-center lg:justify-end">
+          {/* Floating mockup — overflow-hidden prevents float from shifting layout */}
+          <div className="flex-1 w-full flex justify-center lg:justify-end overflow-hidden py-2">
             <DashboardMockup />
           </div>
         </div>
@@ -342,28 +343,24 @@ export default function LandingPage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer
-        id="disclaimer"
-        className="border-t border-[#E8E4DF] bg-[#FAFAF8] py-8 px-6"
-      >
+      <footer className="border-t border-[#E8E4DF] bg-[#FAFAF8] py-8 px-6">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#9B9590]">
           <span className="font-dm-serif text-base text-[#2C3340]">Sulphor</span>
           <div className="flex items-center gap-5">
-            <Link href="#" className="hover:text-[#2C3340] transition-colors">
+            <Link href="/terms" className="hover:text-[#2C3340] transition-colors">
               Terms
             </Link>
-            <Link href="#" className="hover:text-[#2C3340] transition-colors">
+            <Link href="/privacy" className="hover:text-[#2C3340] transition-colors">
               Privacy
             </Link>
-            <Link
-              id="contact"
-              href="mailto:hello@sulphor.com"
-              className="hover:text-[#2C3340] transition-colors"
-            >
+            <Link href="/disclaimer" className="hover:text-[#2C3340] transition-colors">
+              Disclaimer
+            </Link>
+            <Link href="mailto:hello@sulphor.com" className="hover:text-[#2C3340] transition-colors">
               Contact
             </Link>
           </div>
-          <p>Not a bank · Read-only Stripe · No money moved</p>
+          <p>Not a bank · No money moved</p>
         </div>
       </footer>
     </div>

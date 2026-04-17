@@ -48,59 +48,21 @@ const features = [
   },
 ];
 
-const aiFrames = [
-  {
-    label: "You write",
-    labelColor: "text-[#9B9590]",
-    content: (
-      <p className="text-[#5C5852] text-sm leading-relaxed">
-        &ldquo;I&rsquo;m a freelancer earning ~$8k/month in Stripe. I need to handle taxes (around 30%) and want to pay myself $3,000/month consistently.&rdquo;
-      </p>
-    ),
-    border: "border-[#E8E4DF]",
-  },
-  {
-    label: "Sulphor asks",
-    labelColor: "text-[#9B9590]",
-    content: (
-      <p className="text-[#5C5852] text-sm leading-relaxed">
-        Got it. One follow-up — do you have recurring business costs like ads or software you&rsquo;d want to set aside for each payout?
-      </p>
-    ),
-    border: "border-[#E8E4DF]",
-  },
-  {
-    label: "Your plan",
-    labelColor: "text-[#E8A838]",
-    content: (
-      <div className="space-y-0">
-        {[
-          { label: "Tax Holdback", value: "30%" },
-          { label: "Owner Pay", value: "$3,000" },
-          { label: "Ad Spend", value: "10%" },
-          { label: "Operating Buffer", value: "5%" },
-          { label: "Savings", value: "Remainder" },
-        ].map((r) => (
-          <div
-            key={r.label}
-            className="flex justify-between text-sm py-2 border-b border-[#F0EDE8] last:border-0"
-          >
-            <span className="text-[#5C5852]">{r.label}</span>
-            <span className="font-medium text-[#2C3340]">{r.value}</span>
-          </div>
-        ))}
-      </div>
-    ),
-    border: "border-[#E8A838]/40",
-  },
+const freeBullets = [
+  "5 payout plans included",
+  "Full app access",
+  "Custom buckets",
+  "AI planner (limited)",
+  "Upgrade anytime",
 ];
 
-const pricingBullets = [
-  "Unlimited payouts processed",
-  "Automatic bucket splits",
-  "AI payout planner",
-  "Full allocation history",
-  "Read-only Stripe connection",
+const proBullets = [
+  "Unlimited payout plans",
+  "Full app access",
+  "Unlimited custom buckets",
+  "Full AI planner",
+  "Real-time Stripe sync",
+  "Full payout history",
 ];
 
 export default function LandingPage() {
@@ -152,7 +114,7 @@ export default function LandingPage() {
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
           {/* Copy */}
           <div className="flex-1 text-left">
-            <p className="text-xs font-semibold text-[#E8A838] tracking-[0.15em] uppercase mb-5">
+            <p className="text-xs font-semibold text-[#9B9590] tracking-[0.15em] uppercase mb-5">
               Financial clarity for Stripe businesses
             </p>
             <h1 className="font-dm-serif text-[40px] sm:text-[56px] lg:text-[64px] leading-[1.08] text-[#2C3340] mb-6">
@@ -218,7 +180,7 @@ export default function LandingPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {steps.map((s) => (
             <div key={s.n}>
-              <p className="font-mono text-xs font-semibold text-[#E8A838] tracking-widest mb-3">
+              <p className="font-mono text-xs font-semibold text-[#2C3340]/35 tracking-widest mb-3">
                 {s.n}
               </p>
               <p className="font-semibold text-[#2C3340] mb-2">{s.title}</p>
@@ -228,53 +190,92 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Features ── */}
+      {/* ── AI Planner ── */}
       <section className="bg-[#F7F5F2] border-y border-[#E8E4DF] py-20 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="font-dm-serif text-3xl sm:text-4xl text-[#2C3340]">
-              Your revenue, divided before you touch it.
+            <h2 className="font-dm-serif text-3xl sm:text-4xl text-[#2C3340] mb-3">
+              Tell it your situation. It builds the plan.
             </h2>
+            <p className="text-[#9B9590] text-sm">
+              Describe your business once. Get a recommended bucket plan.
+            </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {features.map((f) => (
-              <div
-                key={f.title}
-                className="bg-white border border-[#E8E4DF] rounded-2xl p-6"
-              >
-                <span className="inline-block text-xs font-medium text-[#E8A838] bg-[#E8A838]/10 px-2.5 py-1 rounded-full mb-4">
-                  {f.tag}
-                </span>
-                <p className="font-semibold text-[#2C3340] mb-2">{f.title}</p>
-                <p className="text-sm text-[#7C7168] leading-relaxed">{f.desc}</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Frame 1 */}
+            <div className="border border-[#E8E4DF] rounded-2xl p-5 bg-white">
+              <p className="text-[10px] font-semibold text-[#9B9590] uppercase tracking-[0.15em] mb-3">
+                You write
+              </p>
+              <div className="bg-[#F7F5F2] rounded-xl p-4">
+                <p className="text-[#5C5852] text-sm leading-relaxed">
+                  &ldquo;I&rsquo;m a freelancer earning ~$8k/month in Stripe. I need to
+                  handle taxes (around 30%) and want to pay myself $3,000/month
+                  consistently.&rdquo;
+                </p>
               </div>
-            ))}
+            </div>
+
+            {/* Frame 2 */}
+            <div className="border border-[#E8E4DF] rounded-2xl p-5 bg-white">
+              <p className="text-[10px] font-semibold text-[#9B9590] uppercase tracking-[0.15em] mb-3">
+                Sulphor asks
+              </p>
+              <div className="bg-[#F7F5F2] rounded-xl p-4">
+                <p className="text-[#5C5852] text-sm leading-relaxed">
+                  Got it. One follow-up — do you have recurring business costs
+                  like ads or software you&rsquo;d want to set aside for each payout?
+                </p>
+              </div>
+            </div>
+
+            {/* Frame 3 */}
+            <div className="border border-[#E8E4DF] rounded-2xl p-5 bg-white">
+              <p className="text-[10px] font-semibold text-[#9B9590] uppercase tracking-[0.15em] mb-3">
+                Your plan
+              </p>
+              <div className="bg-[#F7F5F2] rounded-xl p-4">
+                <div className="space-y-0">
+                  {[
+                    { label: "Tax Holdback", value: "30%" },
+                    { label: "Owner Pay", value: "$3,000" },
+                    { label: "Ad Spend", value: "10%" },
+                    { label: "Operating Buffer", value: "5%" },
+                    { label: "Savings", value: "Remainder" },
+                  ].map((r) => (
+                    <div
+                      key={r.label}
+                      className="flex justify-between text-sm py-2 border-b border-[#E8E4DF] last:border-0"
+                    >
+                      <span className="text-[#5C5852]">{r.label}</span>
+                      <span className="font-medium text-[#2C3340]">{r.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── AI Planner ── */}
+      {/* ── Features ── */}
       <section className="max-w-5xl mx-auto px-6 py-20">
         <div className="text-center mb-14">
-          <h2 className="font-dm-serif text-3xl sm:text-4xl text-[#2C3340] mb-3">
-            Tell it your situation. It builds the plan.
+          <h2 className="font-dm-serif text-3xl sm:text-4xl text-[#2C3340]">
+            Your revenue, divided before you touch it.
           </h2>
-          <p className="text-[#9B9590] text-sm">
-            Describe your business once. Get a recommended bucket plan.
-          </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {aiFrames.map((frame, i) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {features.map((f) => (
             <div
-              key={i}
-              className={`border ${frame.border} rounded-2xl p-5 bg-white`}
+              key={f.title}
+              className="bg-white border border-[#E8E4DF] rounded-2xl p-6"
             >
-              <p
-                className={`text-[10px] font-semibold ${frame.labelColor} uppercase tracking-[0.15em] mb-3`}
-              >
-                {frame.label}
-              </p>
-              <div className="bg-[#F7F5F2] rounded-xl p-4">{frame.content}</div>
+              <span className="inline-block text-xs font-medium text-[#2C3340] bg-[#EEEBE6] px-2.5 py-1 rounded-full mb-4">
+                {f.tag}
+              </span>
+              <p className="font-semibold text-[#2C3340] mb-2">{f.title}</p>
+              <p className="text-sm text-[#7C7168] leading-relaxed">{f.desc}</p>
             </div>
           ))}
         </div>
@@ -303,38 +304,77 @@ export default function LandingPage() {
       </section>
 
       {/* ── Pricing ── */}
-      <section className="max-w-2xl mx-auto px-6 py-20 text-center">
+      <section className="max-w-3xl mx-auto px-6 py-20 text-center">
         <h2 className="font-dm-serif text-3xl sm:text-4xl text-[#2C3340] mb-3">
-          Simple, honest pricing.
+          Start free. Upgrade when you&apos;re ready.
         </h2>
-        <p className="text-[#7C7168] text-sm mb-12">One plan. Everything included.</p>
-        <div className="border-2 border-[#2C3340] rounded-3xl p-8 text-left max-w-sm mx-auto">
-          <p className="text-[10px] font-semibold text-[#9B9590] uppercase tracking-[0.15em] mb-1">
-            Standard
-          </p>
-          <div className="flex items-end gap-1 mb-7">
-            <span className="text-4xl font-bold text-[#2C3340]">$11.99</span>
-            <span className="text-[#9B9590] text-sm mb-1">/month</span>
+        <p className="text-[#7C7168] text-sm mb-12">No surprises. Cancel anytime.</p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-stretch">
+          {/* Free tier */}
+          <div className="border border-[#E8E4DF] rounded-3xl p-7 text-left flex flex-col">
+            <div className="mb-5">
+              <p className="text-[10px] font-semibold text-[#9B9590] uppercase tracking-[0.15em] mb-1">
+                Free
+              </p>
+              <div className="flex items-end gap-1">
+                <span className="text-4xl font-bold text-[#2C3340]">$0</span>
+              </div>
+              <p className="text-xs text-[#9B9590] mt-1">To get started</p>
+            </div>
+            <ul className="space-y-3 mb-8 flex-1">
+              {freeBullets.map((item) => (
+                <li key={item} className="flex items-center gap-3 text-sm text-[#5C5852]">
+                  <span className="text-[#2C3340] font-bold text-base leading-none flex-shrink-0">
+                    ✓
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/signup"
+              className="block w-full border border-[#2C3340] text-[#2C3340] bg-white text-sm font-medium py-3.5 rounded-full text-center hover:bg-[#F7F5F2] transition-colors"
+            >
+              Get started
+            </Link>
           </div>
-          <ul className="space-y-3 mb-8">
-            {pricingBullets.map((item) => (
-              <li key={item} className="flex items-center gap-3 text-sm text-[#5C5852]">
-                <span className="text-[#E8A838] font-bold text-base leading-none flex-shrink-0">
-                  ✓
+
+          {/* Pro tier */}
+          <div className="border-[1.5px] border-[#2C3340] rounded-3xl p-7 text-left flex flex-col">
+            <div className="mb-5">
+              <div className="flex items-center gap-2 mb-1">
+                <p className="text-[10px] font-semibold text-[#9B9590] uppercase tracking-[0.15em]">
+                  Pro
+                </p>
+                <span className="bg-[#2C3340] text-white text-[9px] font-semibold px-2 py-0.5 rounded-full tracking-wide">
+                  Most popular
                 </span>
-                {item}
-              </li>
-            ))}
-          </ul>
-          <Link
-            href="/signup"
-            className="block w-full bg-[#2C3340] text-white text-sm font-medium py-3.5 rounded-full text-center hover:bg-[#3d4755] transition-colors"
-          >
-            Get started
-          </Link>
-          <p className="text-xs text-[#9B9590] text-center mt-3">
-            Cancel anytime. No contracts.
-          </p>
+              </div>
+              <div className="flex items-end gap-1">
+                <span className="text-4xl font-bold text-[#2C3340]">$9.99</span>
+                <span className="text-[#9B9590] text-sm mb-1">/month</span>
+              </div>
+              <p className="text-xs text-[#9B9590] mt-1">For growing businesses</p>
+            </div>
+            <ul className="space-y-3 mb-8 flex-1">
+              {proBullets.map((item) => (
+                <li key={item} className="flex items-center gap-3 text-sm text-[#5C5852]">
+                  <span className="text-[#2C3340] font-bold text-base leading-none flex-shrink-0">
+                    ✓
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <Link
+              href="/signup"
+              className="block w-full bg-[#2C3340] text-white text-sm font-medium py-3.5 rounded-full text-center hover:bg-[#3d4755] transition-colors"
+            >
+              Get started
+            </Link>
+            <p className="text-xs text-[#9B9590] text-center mt-3">Cancel anytime.</p>
+          </div>
         </div>
       </section>
 
@@ -345,7 +385,7 @@ export default function LandingPage() {
         </h2>
         <Link
           href="/signup"
-          className="inline-block bg-[#E8A838] text-[#2C3340] font-semibold px-10 py-4 rounded-full text-base hover:bg-[#d4952e] transition-colors"
+          className="inline-block bg-white text-[#2C3340] font-semibold px-10 py-4 rounded-full text-base hover:bg-[#F7F5F2] transition-colors"
         >
           Connect Stripe — it&apos;s free
         </Link>

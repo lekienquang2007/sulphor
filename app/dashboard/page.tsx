@@ -98,8 +98,7 @@ export default async function DashboardPage() {
         <nav className="flex items-center gap-4 text-sm">
           <Link href="/dashboard" className="text-foreground font-medium">Home</Link>
           <Link href="/history" className="text-muted-foreground hover:text-foreground">History</Link>
-          <Link href="/pricing" className="text-muted-foreground hover:text-foreground">Pricing</Link>
-          <Link href="/settings" className="text-muted-foreground hover:text-foreground">Settings</Link>
+<Link href="/settings" className="text-muted-foreground hover:text-foreground">Settings</Link>
         </nav>
       </header>
 

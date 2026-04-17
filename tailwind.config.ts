@@ -34,6 +34,16 @@ const config: Config = {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
+        // Landing palette
+        charcoal: "#2C3340",
+        gold: "#E8A838",
+        "warm-50": "#FAFAF8",
+        "warm-100": "#F7F5F2",
+        "warm-200": "#EDE9E3",
+        "warm-300": "#DDD8D0",
+        "warm-500": "#9B9590",
+        "warm-700": "#5C5852",
+        "warm-900": "#2C2926",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -41,9 +51,19 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        // Geometric sans for display, system sans for body
         display: ["var(--font-geist-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
+        inter: ["var(--font-inter)", "ui-sans-serif", "system-ui", "sans-serif"],
+        "dm-serif": ["var(--font-dm-serif)", "serif"],
+      },
+      animation: {
+        float: "float 5s ease-in-out infinite",
+      },
+      keyframes: {
+        float: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-14px)" },
+        },
       },
     },
   },

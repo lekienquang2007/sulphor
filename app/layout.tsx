@@ -28,6 +28,7 @@ const dmSerif = DM_Serif_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://sulphor.com"),
   title: "Sulphor — Stripe Payout Operating System",
   description: "Turn every Stripe payout into a simple operating plan.",
 };
